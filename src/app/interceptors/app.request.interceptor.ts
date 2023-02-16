@@ -18,6 +18,11 @@ export class XhrInterceptor implements HttpInterceptor {
     if(this.user && this.user.password && this.user.email){
       httpHeaders = httpHeaders.append('Authorization', 'Basic ' + window.btoa(this.user.email + ':' + this.user.password));
     }
+    //send csrf token (when available) with every request to the backend api- csrf is not available for public pages where login is not needed. 
+    let xsrf = sessionStorage.getItem('XSRF-TOKEN');
+    if (xsrf) {
+      httpHeaders = httpHeaders.append('X-XSRF-TOKEN', xsrf);
+    }
 
     httpHeaders = httpHeaders.append('X-Requested-With', 'XMLHttpRequest');
     const xhr = req.clone({
